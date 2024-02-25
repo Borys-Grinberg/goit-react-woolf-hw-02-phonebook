@@ -15,22 +15,9 @@ const ContactForm = ({ addContact, contacts }) => {
 
   const handleAddContact = () => {
     if (name.trim() !== '' && number.trim() !== '') {
-      // Check if the name already exists in contacts
-      const isNameExists = contacts.some(
-        contact => contact.name.toLowerCase() === name.trim().toLowerCase()
-      );
-
-      if (isNameExists) {
-        alert(
-          `Contact with name "${name}" already exists! Please choose a different name.`
-        );
-      } else {
-        addContact(name.trim(), number.trim());
-        setName('');
-        setNumber('');
-      }
-    } else {
-      alert('Please enter both name and number.');
+      addContact(name.trim(), number.trim());
+      setName('');
+      setNumber('');
     }
   };
 

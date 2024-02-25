@@ -6,24 +6,43 @@ import { nanoid } from 'nanoid';
 import styles from './App.module.css';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    contacts: [],
+    filter: '',
+  };
 
-    this.state = {
-      contacts: [],
-      filter: '',
-    };
+  componentDidMount() {
+    const storedContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (storedContacts) {
+      this.setState({ contacts: storedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
   }
 
   addContact = (name, number) => {
-    const newContact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-    }));
+    const isContactExists = this.state.contacts.some(
+      contact => contact.name.toLowerCase() === name.trim().toLowerCase()
+    );
+
+    if (!isContactExists) {
+      const newContact = {
+        id: nanoid(),
+        name,
+        number,
+      };
+      this.setState(prevState => ({
+        contacts: [...prevState.contacts, newContact],
+      }));
+    } else {
+      alert(
+        `Contact with name "${name}" already exists! Please choose a different name.`
+      );
+    }
   };
 
   handleFilterChange = e => {
@@ -46,7 +65,7 @@ class App extends Component {
     return (
       <div className={styles.container}>
         <h1>Phonebook</h1>
-        <ContactForm addContact={this.addContact} contacts={contacts} />
+        <ContactForm addContact={this.addContact} />
 
         <h2>Contacts</h2>
         <Filter filter={filter} handleFilterChange={this.handleFilterChange} />
